@@ -4,7 +4,7 @@ import {
   TechnicianList_query,
   TicketList_query
 } from "./queries";
-import { TECHNICIANLIST, BUSINESSFUNCTIONLIST, TICKETLIST } from "../../types";
+import { TECHNICIANLIST, BUSINESSFUNCTIONLIST, TICKETLIST } from "../../../services/types";
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end()
