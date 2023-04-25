@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { BUSINESSFUNCTIONLIST, TICKETLIST, TECHNICIANLIST } from "../services/types";
+import { BUSINESSFUNCTIONLIST, TICKETLIST, TECHNICIANLIST } from "../service/types";
 import TechnicianCard from "../components/TechnicianCard";
 import { FaAngleDown, FaChartBar } from 'react-icons/fa'
 import TicketsBarChart from "../components/TicketsBarChart";
-import { request_api, nlastWeek, get_tickets_per_user_for_chart } from "../services/services";
+import { request_api, nlastWeek, get_tickets_per_user_for_chart } from "../service/services";
 
 import { ThreeDots } from 'react-loader-spinner';
 
@@ -40,11 +40,15 @@ export default function Home() {
 
 		/* Start Get All Ticket List From SuperOps Server  */
 		const testTicket = await request_api( TICKETLIST, {"input":{"page": 1, "pageSize": 1}} );
-		const totalTicketCount = testTicket.data.getTicketList.listInfo.totalCount;
-
+		const totalTicketCount = testTicket && testTicket.data && testTicket.data.getTicketList && testTicket.data.getTicketList.listInfo ? testTicket.data.getTicketList.listInfo.totalCount : 1;
+		console.log(testTicket);
 		const _allTickets = await request_api( TICKETLIST, {"input":{"page": 1, "pageSize": totalTicketCount}});
-		const allTickets = _allTickets.data.getTicketList.tickets;
-		setTicketsData(_allTickets.data.getTicketList);
+		console.log(_allTickets);
+		let allTickets;
+		if(_allTickets && _allTickets.data && _allTickets.data.getTicketList && _allTickets.data.getTicketList.tickets.length){
+			allTickets = _allTickets.data.getTicketList.tickets;
+			setTicketsData(_allTickets.data.getTicketList);
+		}
 
 		const date_range_init = { start: state[0].startDate, end:state[0].endDate }
 		setDateString(toDateString(date_range_init));
