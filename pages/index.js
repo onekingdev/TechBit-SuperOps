@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { BUSINESSFUNCTIONLIST, TICKETLIST, TECHNICIANLIST } from "../service/types";
+import { BUSINESSFUNCTIONLIST, TICKETLIST, TECHNICIANLIST } from "../services/types";
 import TechnicianCard from "../components/TechnicianCard";
 import { FaAngleDown, FaChartBar } from 'react-icons/fa'
 import TicketsBarChart from "../components/TicketsBarChart";
-import { request_api, nlastWeek, get_tickets_per_user_for_chart } from "../service/services";
+import { request_api, nlastWeek, get_tickets_per_user_for_chart } from "../services/services";
 
 import { ThreeDots } from 'react-loader-spinner';
 
