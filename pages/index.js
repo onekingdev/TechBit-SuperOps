@@ -37,13 +37,11 @@ export default function Home() {
 		const _allTechnicians = await request_api( TECHNICIANLIST, {"input":{"page": 1, "pageSize": 100}});
 		const allTechnicians = _allTechnicians.data.getTechnicianList.userList;
 		setTechniciandata(_allTechnicians.data.getTechnicianList);
-		console.log(_allTechnicians.data.getTechnicianList);
 
-
-		/* Start Get All Ticket List From SuperOps Server  */
 		const testTicket = await request_api( TICKETLIST, {"input":{"page": 1, "pageSize": 1}} );
 		const totalTicketCount = testTicket && testTicket.data && testTicket.data.getTicketList && testTicket.data.getTicketList.listInfo ? testTicket.data.getTicketList.listInfo.totalCount : 1;
 		const _allTickets = await request_api( TICKETLIST, {"input":{"page": 1, "pageSize": totalTicketCount}});
+		console.log(_allTickets);
 		let allTickets;
 		if(_allTickets && _allTickets.data && _allTickets.data.getTicketList && _allTickets.data.getTicketList.tickets.length){
 			allTickets = _allTickets.data.getTicketList.tickets;
@@ -51,6 +49,7 @@ export default function Home() {
 		}
 
 		const date_range_init = { start: state[0].startDate, end:state[0].endDate }
+
 		setDateString(toDateString(date_range_init));
 		
 		if(allTickets.length && allTechnicians.length){
@@ -63,7 +62,6 @@ export default function Home() {
 	
 	const handleChange = (item) => {
 		setState([item.selection])
-		console.log(item.selection.startDate, item.selection.endDate)
 		const date_range = {
 			'start': new Date(item.selection.startDate),
 			'end': new Date(item.selection.endDate) 
