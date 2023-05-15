@@ -38,12 +38,9 @@ export default function Home() {
 		const allTechnicians = _allTechnicians.data.getTechnicianList.userList;
 		setTechniciandata(_allTechnicians.data.getTechnicianList);
 
-		/* Start Get All Ticket List From SuperOps Server  */
 		const testTicket = await request_api( TICKETLIST, {"input":{"page": 1, "pageSize": 1}} );
 		const totalTicketCount = testTicket && testTicket.data && testTicket.data.getTicketList && testTicket.data.getTicketList.listInfo ? testTicket.data.getTicketList.listInfo.totalCount : 1;
-		console.log(testTicket);
 		const _allTickets = await request_api( TICKETLIST, {"input":{"page": 1, "pageSize": totalTicketCount}});
-		console.log(_allTickets);
 		let allTickets;
 		if(_allTickets && _allTickets.data && _allTickets.data.getTicketList && _allTickets.data.getTicketList.tickets.length){
 			allTickets = _allTickets.data.getTicketList.tickets;
@@ -51,10 +48,11 @@ export default function Home() {
 		}
 
 		const date_range_init = { start: state[0].startDate, end:state[0].endDate }
+
 		setDateString(toDateString(date_range_init));
 		
 		if(allTickets.length && allTechnicians.length){
-			const data = get_tickets_per_user_for_chart(allTickets, allTechnicians, date_range_init);
+			const data = get_tickets_per_user_for_chart(allTickets, allTechnicians, toRangeDateString(date_range_init));
 			setChartData(data);
 		}
 
@@ -63,14 +61,17 @@ export default function Home() {
 	
 	const handleChange = (item) => {
 		setState([item.selection])
-		console.log(item.selection.startDate, item.selection.endDate)
+		let start = new Date(item.selection.startDate);
+		let end = new Date(item.selection.endDate);
+		start.setDate(start.getDate()+1);
+		end.setDate(end.getDate()+1);
 		const date_range = {
-			'start': new Date(item.selection.startDate),
-			'end': new Date(item.selection.endDate) 
+			'start': start,
+			'end': end
 		}
 		setDateString(toDateString(date_range));
 		if(ticketsData.tickets && ticketsData.tickets.length && techniciandata.userList && techniciandata.userList.length){
-			const data = get_tickets_per_user_for_chart(ticketsData.tickets, techniciandata.userList, date_range);
+			const data = get_tickets_per_user_for_chart(ticketsData.tickets, techniciandata.userList, toRangeDateString(date_range));
 			setChartData(data);
 		}
 	}
@@ -79,13 +80,22 @@ export default function Home() {
 		setSelectedValue(event.target.value);
 		const i = event.target.value;
 		if(ticketsData.tickets && ticketsData.tickets.length && techniciandata.userList && techniciandata.userList.length){
-			const data = get_tickets_per_user_for_chart(ticketsData.tickets, techniciandata.userList, nlastWeek(i));
+			const data = get_tickets_per_user_for_chart(ticketsData.tickets, techniciandata.userList, toRangeDateString(nlastWeek(i)));
 			setChartData(data);
 		}
 	}
 
 	const toDateString = (date_range) => {
 		return `${new Date(date_range.start).toLocaleDateString()} - ${new Date(date_range.end).toLocaleDateString()}`
+	}
+
+	const toRangeDateString = (date) => {
+		// const date = new Date("2023-04-02T00:00:00");
+		const startDate = date.start.toISOString().slice(0, 19);
+		const start = startDate.substring(0, 11) + "00:00:00";
+		const endDate = date.end.toISOString().slice(0, 19);
+		const end = endDate.substring(0, 11) + "23:59:59";
+		return {start, end};
 	}
 
 	return (
