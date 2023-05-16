@@ -81,8 +81,8 @@ export default function Home() {
 		setState([item.selection])
 		let start = new Date(item.selection.startDate);
 		let end = new Date(item.selection.endDate);
-		// start.setDate(start.getDate()+1);
-		// end.setDate(end.getDate()+1);
+		start.setDate(start.getDate()+1);
+		end.setDate(end.getDate()+1);
 		const date_range = {
 			'start': start,
 			'end': end
@@ -106,11 +106,11 @@ export default function Home() {
 	const toDateString = (date_range) => {
 		let start = new Date(date_range.start);
 		let end = new Date(date_range.end);
-		// const copyObj = Object.assign({}, date_range);
-		// let start_date  = copyObj.start;
-		// let end_date  = copyObj.end;
-		// start.setDate(start.getDate()-1);
-		// end.setDate(end.getDate()-1);
+		const copyObj = Object.assign({}, date_range);
+		let start_date  = copyObj.start;
+		let end_date  = copyObj.end;
+		start.setDate(start.getDate()-1);
+		end.setDate(end.getDate()-1);
 		return `${new Date(start).toLocaleDateString()} - ${new Date(end).toLocaleDateString()}`
 	}
 
