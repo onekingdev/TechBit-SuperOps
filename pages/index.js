@@ -18,10 +18,12 @@ export default function Home() {
 	const [ techniciandata, setTechniciandata ] = useState({});
 	const [ ticketsData, setTicketsData ] = useState({});
 	const [ chartData, setChartData ] = useState({});
+	// const ddd = {'Jeffry Manlapaz': 27, 'Jonathan Alfante': 49, 'Lucia Miramontes': 40, 'Tony Rodriguez': 42}
 	const [ selectedValue, setSelectedValue ] = useState("");
 	const [ dateString, setDateString ] = useState("");
 	const dropdownRef = useRef(null);
 	const [isOpen, setIsOpen] = useState(false);
+	const [option, setOption] = useState('graph');
 
 	const [state, setState] = useState([
 		{
@@ -39,10 +41,12 @@ export default function Home() {
 		const _allTechnicians = await request_api( TECHNICIANLIST, {"input":{"page": 1, "pageSize": 100}});
 		const allTechnicians = _allTechnicians.data.getTechnicianList.userList;
 		setTechniciandata(_allTechnicians.data.getTechnicianList);
+		// setTechniciandata([]);
 
 		const testTicket = await request_api( TICKETLIST, {"input":{"page": 1, "pageSize": 1}} );
 		const totalTicketCount = testTicket && testTicket.data && testTicket.data.getTicketList && testTicket.data.getTicketList.listInfo ? testTicket.data.getTicketList.listInfo.totalCount : 1;
 		const _allTickets = await request_api( TICKETLIST, {"input":{"page": 1, "pageSize": totalTicketCount}});
+		// const _allTickets = [];
 		let allTickets;
 		if(_allTickets && _allTickets.data && _allTickets.data.getTicketList && _allTickets.data.getTicketList.tickets.length){
 			allTickets = _allTickets.data.getTicketList.tickets;
@@ -53,7 +57,7 @@ export default function Home() {
 
 		setDateString(toDateString(date_range_init));
 		
-		if(allTickets.length && allTechnicians.length){
+		if(allTickets?.length && allTechnicians.length){
 			const data = get_tickets_per_user_for_chart(allTickets, allTechnicians, toRangeDateString(date_range_init));
 			setChartData(data);
 		}
@@ -218,22 +222,75 @@ export default function Home() {
 											}
 										 </div>
 									</div>
-									
-									{/* <div className="sm:col-span-3">
-										<div className="">
-											<select value={selectedValue} onChange={handleSelectChange} id="week_type" name="week_type" className="block w-full rounded-md border px-[6px] py-[6px] text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-												<option value="0">This week</option>
-												<option value="1">Last week</option>
-												<option value="2">2 week ago</option>
-											</select>
-										</div>
-									</div> */}
 								</div>
 								<hr className="h-px m-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent" />
 								
 								<div className="flex-auto p-4">
-									<p className='text-center mb-0 text-2xl'>{dateString}</p>
-									<TicketsBarChart data = {chartData}/>
+									<div className='flex justify-between items-center mb-4'>
+										<p className='text-center mb-0 text-2xl'>{dateString}</p>
+										<ul className="items-center w-[240px] text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex">
+											<li className={option === 'list' ? "w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:bg-gray-700" : "w-full border-b border-gray-200 sm:border-b-0 sm:border-r"}>
+												<div className="flex items-center pl-3">
+													<input 
+														id="horizontal-list-radio-license" 
+														type="radio" 
+														checked={option === 'list'}
+														value={option} 
+														onChange={()=>setOption('list')} 
+														name="list-radio" 
+														className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+													/>
+													<label htmlFor="horizontal-list-radio-license" className={option === 'list' ? "w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300" : "w-full py-3 ml-2 text-sm font-medium text-gray-900"}>List View </label>
+												</div>
+											</li>
+											<li className={option === 'graph' ? "w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:bg-gray-700" : "w-full border-b border-gray-200 sm:border-b-0 sm:border-r"}>
+												<div className="flex items-center pl-3">
+													<input 
+														id="horizontal-list-radio-id" 
+														type="radio" 
+														checked={option === 'graph'} 
+														value={option} 
+														onChange={()=>setOption('graph')} 
+														name="list-radio" 
+														className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 dark:bg-gray-600 dark:border-gray-500"
+													/>
+													<label htmlFor="horizontal-list-radio-id" className={option === 'graph' ? "w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300" : "w-full py-3 ml-2 text-sm font-medium text-gray-900"}>Graph View</label>
+												</div>
+											</li>
+										</ul>
+									</div>
+									{option === 'graph' && <TicketsBarChart data = {chartData}/>}
+									{option === 'list' && 
+										<div className="relative overflow-x-auto">
+											<table className="w-full text-sm text-left text-gray-500 border">
+												<thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
+													<tr>
+														<th scope="col" className="px-6 py-3">
+															NAME
+														</th>
+														<th scope="col" className="px-6 py-3">
+															TICKET COUNT
+														</th>
+													</tr>
+												</thead>
+												<tbody>
+													{
+														Object.entries(chartData.chartData).map(item => {
+															return <tr className="bg-white border-b" key={item[0]}>
+																<td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+																	{item[0]}
+																</td>
+																<td className="px-6 py-4">
+																	{item[1]}
+																</td>
+															</tr>
+														})
+													}
+														
+												</tbody>
+											</table>
+										</div>
+									}
 								</div>
 							</div>
 						</div>
