@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "gatsby build",
+    "build": "next build",
     "start": "next start",
     "knex": "dotenv -e .env.local knex"
   },
