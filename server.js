@@ -19,7 +19,7 @@ app.prepare().then(() => {
     } else {
       handle(req, res, parsedUrl)
     }
-  }).listen(port, (err) => {
+  }).listen(port, '0.0.0.0', (err) => {
     if (err) throw err
     console.log(`> Ready on http://localhost:${port}`)
   })
