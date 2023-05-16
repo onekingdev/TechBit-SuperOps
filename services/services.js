@@ -14,7 +14,8 @@ export const get_tickets_per_user_for_chart = ( tickets, technicians, time_range
             }
         }
     }
-
+    console.log(time_range)
+    console.log(ticketCount)
     const result = {
         "labels" : Object.keys(ticketCount),
         "data" : Object.values(ticketCount)

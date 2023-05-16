@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { BUSINESSFUNCTIONLIST, TICKETLIST, TECHNICIANLIST } from "../services/types";
 import TechnicianCard from "../components/TechnicianCard";
-import { FaAngleDown, FaChartBar } from 'react-icons/fa'
+import { FaAngleDown, FaChartBar, FaTemperatureHigh } from 'react-icons/fa'
 import TicketsBarChart from "../components/TicketsBarChart";
 import { request_api, nlastWeek, get_tickets_per_user_for_chart } from "../services/services";
 
@@ -20,6 +20,8 @@ export default function Home() {
 	const [ chartData, setChartData ] = useState({});
 	const [ selectedValue, setSelectedValue ] = useState("");
 	const [ dateString, setDateString ] = useState("");
+	const dropdownRef = useRef(null);
+	const [isOpen, setIsOpen] = useState(false);
 
 	const [state, setState] = useState([
 		{
@@ -58,13 +60,29 @@ export default function Home() {
 
 		setStatus(false);
 	}, [])
+
+	useEffect(() => {
+		function handleClickOutside(event) {
+		  if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+			setIsOpen(false);
+		  }
+		}
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+		  document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, [dropdownRef]);
+
+	const handleToggleDropdown = () => {
+		setIsOpen(!isOpen);
+	  };
 	
 	const handleChange = (item) => {
 		setState([item.selection])
 		let start = new Date(item.selection.startDate);
 		let end = new Date(item.selection.endDate);
-		start.setDate(start.getDate()+1);
-		end.setDate(end.getDate()+1);
+		// start.setDate(start.getDate()+1);
+		// end.setDate(end.getDate()+1);
 		const date_range = {
 			'start': start,
 			'end': end
@@ -86,7 +104,14 @@ export default function Home() {
 	}
 
 	const toDateString = (date_range) => {
-		return `${new Date(date_range.start).toLocaleDateString()} - ${new Date(date_range.end).toLocaleDateString()}`
+		let start = new Date(date_range.start);
+		let end = new Date(date_range.end);
+		// const copyObj = Object.assign({}, date_range);
+		// let start_date  = copyObj.start;
+		// let end_date  = copyObj.end;
+		// start.setDate(start.getDate()-1);
+		// end.setDate(end.getDate()-1);
+		return `${new Date(start).toLocaleDateString()} - ${new Date(end).toLocaleDateString()}`
 	}
 
 	const toRangeDateString = (date) => {
@@ -172,16 +197,16 @@ export default function Home() {
 
 									
 
-									<div className="relative inline-block text-left">
+									<div className="relative inline-block text-left"  ref={dropdownRef}>
 										<div>
-											<button onClick={()=>setIsDateShow(!isDateShow)} type="button" className="inline-flex w-full items-center justify-center gap-x-1.5 rounded-md bg-white px-3 py-1 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" id="menu-button">
+											<button  onClick={handleToggleDropdown} type="button" className="inline-flex w-full items-center justify-center gap-x-1.5 rounded-md bg-white px-3 py-1 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" id="menu-button">
 											Date Range
 												<FaAngleDown className="-mr-1 h-4 w-4 text-gray-400"/>
 											</button>
 										</div>
 
 										 <div className="absolute right-[666px] z-100 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-opacity-5 focus:outline-none">
-										{	isDateShow ?
+										{	isOpen &&
 												<DateRangePicker
 													onChange={item => handleChange(item)}
 													showSelectionPreview={true}
@@ -189,7 +214,7 @@ export default function Home() {
 													months={2}
 													ranges={state}
 													direction="horizontal"
-												/> : <></>
+												/> 
 											}
 										 </div>
 									</div>
