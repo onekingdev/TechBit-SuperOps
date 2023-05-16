@@ -9,7 +9,6 @@
     "knex": "dotenv -e .env.local knex"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
     "chart.js": "^3.9.1",
     "date-fns": "^2.29.3",
     "dotenv-cli": "^4.0.0",
