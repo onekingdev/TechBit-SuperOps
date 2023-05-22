@@ -2,6 +2,7 @@
 
 export const get_tickets_per_user_for_chart = ( tickets, technicians, time_range ) => {
     const ticketCount = {};
+    const totalCount = 0;
     for (let i = 0; i < tickets.length; i++) {
         const ticket = tickets[i]; //updatedTime, resolutionTime
         if (ticket.status === 'Closed' && ticket.createdTime >= time_range.start && ticket.createdTime <= time_range.end) {
@@ -14,12 +15,23 @@ export const get_tickets_per_user_for_chart = ( tickets, technicians, time_range
             }
         }
     }
-    console.log(time_range)
+    console.log("time_range", time_range)
     console.log(ticketCount)
+    const sortedTicketCount = Object.entries(ticketCount)
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .reduce((obj, [key, value]) => {
+        obj[key] = value;
+        return obj;
+    }, {});
+    for(let key in sortedTicketCount) {
+        totalCount += sortedTicketCount[key];
+    }
+    let tableTicketCounts = {...sortedTicketCount};
+    tableTicketCounts['Total'] = totalCount;
     const result = {
-        "labels" : Object.keys(ticketCount),
-        "data" : Object.values(ticketCount),
-        "chartData": ticketCount
+        "labels" : Object.keys(sortedTicketCount),
+        "data" : Object.values(sortedTicketCount),
+        "chartData": tableTicketCounts
     }
     return result;
 }

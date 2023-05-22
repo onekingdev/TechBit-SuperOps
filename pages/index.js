@@ -79,12 +79,14 @@ export default function Home() {
 
 	const handleToggleDropdown = () => {
 		setIsOpen(!isOpen);
-	  };
+	};
 	
 	const handleChange = (item) => {
 		setState([item.selection])
 		let start = new Date(item.selection.startDate);
 		let end = new Date(item.selection.endDate);
+		start = new Date(start.getFullYear(), start.getMonth(), start.getDate())
+		end = new Date(end.getFullYear(), end.getMonth(), end.getDate())
 		start.setDate(start.getDate()+1);
 		end.setDate(end.getDate()+1);
 		const date_range = {
@@ -259,7 +261,11 @@ export default function Home() {
 											</li>
 										</ul>
 									</div>
-									{option === 'graph' && <TicketsBarChart data = {chartData}/>}
+									{option === 'graph' && 
+										<div>
+											<TicketsBarChart data = {chartData}/>
+										</div>
+									}
 									{option === 'list' && 
 										<div className="relative overflow-x-auto">
 											<table className="w-full text-sm text-left text-gray-500 border">
