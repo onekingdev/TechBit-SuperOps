@@ -87,8 +87,8 @@ export default function Home() {
 		let end = new Date(item.selection.endDate);
 		start = new Date(start.getFullYear(), start.getMonth(), start.getDate())
 		end = new Date(end.getFullYear(), end.getMonth(), end.getDate())
-		start.setDate(start.getDate()+1);
-		end.setDate(end.getDate()+1);
+		// start.setDate(start.getDate()+1);
+		// end.setDate(end.getDate()+1);
 		const date_range = {
 			'start': start,
 			'end': end
@@ -115,8 +115,10 @@ export default function Home() {
 		const copyObj = Object.assign({}, date_range);
 		let start_date  = copyObj.start;
 		let end_date  = copyObj.end;
-		start.setDate(start.getDate()-1);
-		end.setDate(end.getDate()-1);
+		// start.setDate(start.getDate()-1);
+		// end.setDate(end.getDate()-1);
+		start.setDate(start.getDate());
+		end.setDate(end.getDate());
 		return `${new Date(start).toLocaleDateString()} - ${new Date(end).toLocaleDateString()}`
 	}
 

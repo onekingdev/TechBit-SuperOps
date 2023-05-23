@@ -5,7 +5,7 @@ export const get_tickets_per_user_for_chart = ( tickets, technicians, time_range
     const totalCount = 0;
     for (let i = 0; i < tickets.length; i++) {
         const ticket = tickets[i]; //updatedTime, resolutionTime
-        if (ticket.status === 'Closed' && ticket.createdTime >= time_range.start && ticket.createdTime <= time_range.end) {
+        if (ticket.status === 'Closed' && ticket.createdTime >= time_range.start && ticket.createdTime <= time_range.end && ticket.updatedTime >= time_range.start && ticket.updatedTime <= time_range.end) {
             const technicianId = ticket.technician?.userId;
             if (technicianId) {
                 const technician = technicians.find(user => user.userId === technicianId);
